@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Профессиональное резюме разработчика-исследователя с опытом в области full-stack разработки, автономных систем и ИИ">
+  <meta name="keywords" content="full-stack, developer, researcher, resume, portfolio, разработчик, резюме, портфолио">
+  <meta name="theme-color" content="#1e40af">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title data-i18n="page-title">Резюме | Developer-Researcher</title>
 
   <!-- Load Tailwind CSS first -->
@@ -25,6 +30,9 @@
       z-index: 1;
       transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
       transform: translateY(20px);
+      padding-left: 1rem;
+      padding-right: 1rem;
+      overflow-y: auto; /* Добавляем прокрутку для маленьких экранов */
     }
     .section.visible {
       opacity: 1;
@@ -228,6 +236,85 @@
       .nav-item-dot {
         width: 10px;
         height: 10px;
+      }
+      h1 {
+        font-size: 2.5rem !important;
+      }
+      h2 {
+        font-size: 1.75rem !important;
+      }
+      .key-traits {
+        gap: 0.5rem;
+      }
+      .trait-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem !important;
+      }
+      .space-x-4 > * {
+        margin-top: 0.5rem;
+      }
+      .space-x-4 {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+    
+    /* Экстремально маленькие устройства */
+    @media (max-width: 360px) {
+      #nav-dots {
+        right: 5px;
+        gap: 8px;
+      }
+      .nav-item-label {
+        font-size: 0.6rem;
+        padding: 1px 3px;
+        margin-right: 4px;
+      }
+      .nav-item-dot {
+        width: 8px;
+        height: 8px;
+      }
+      h1 {
+        font-size: 2rem !important;
+      }
+      .skill-item {
+        padding: 0.5rem !important;
+      }
+      .skill-categories .grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+    
+    /* Адаптивные стили для карты навыков */
+    @media (max-width: 640px) {
+      .skill-level-legend {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .skill-categories .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    /* Улучшения для touch-устройств */
+    @media (hover: none) {
+      .section {
+        touch-action: pan-y;
+      }
+      .button-like {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+      }
+      .skill-item:active {
+        transform: translateY(-3px);
+      }
+      #nav-dots {
+        padding-right: 0.5rem;
+      }
+      .nav-item {
+        padding: 0.5rem 0;
       }
     }
 
