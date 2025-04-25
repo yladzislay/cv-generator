@@ -1,413 +1,838 @@
-<!--
- ┌──────────────────────────────────────────────────────────────────────┐
- │ @name         CV generator                                           │
- │ @author       Léa Gallier                                            │
- │ @version      1.0                                                    │
- │ @created      2022-12-19                                             │
- │ @modified     2023-03-17                                             │
- │ @description  Resume CV with dark/light mode and PDF export          │
- └──────────────────────────────────────────────────────────────────────┘
--->
-
 <!DOCTYPE html>
-<html lang="en">
-    
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="ru" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="page-title">Резюме | Developer-Researcher</title>
 
-        <title>Responsive Resume CV</title>
+  <!-- Load Tailwind CSS first -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        <!-- Import Fontawesome -->
-        <script src="https://kit.fontawesome.com/cb81440751.js" crossorigin="anonymous"></script>
+  <!-- Configure Tailwind after it's loaded -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
 
-        <!-- Import stylesheets in CSS3 -->
-        <link rel="stylesheet" href="assets/stylesheets/style.css" type="text/css">
+  <style>
+    html, body { overflow: hidden; height: 100%; /* Explicit height */ }
+    .section {
+      position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+      opacity: 0;
+      visibility: hidden;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 1;
+      transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+      transform: translateY(20px);
+    }
+    .section.visible {
+      opacity: 1;
+      visibility: visible;
+      z-index: 40;
+      transform: translateY(0);
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        <!-- Favicon -->
-        <link rel="apple-touch-icon" sizes="180x180" href="assets/pictures/favicon/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="assets/pictures/favicon/favicon-16x16.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="assets/pictures/favicon/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="192x192" href="assets/pictures/favicon/android-chrome-192x192.png">
-        <link rel="icon" type="image/png" sizes="512x512" href="assets/pictures/favicon/android-chrome-512x512.png">
-    </head>
+    /* Experience slider animation */
+    #exp-slider { perspective: 1000px; }
+    .exp-slide {
+       transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+       width: 100%;
+       backface-visibility: hidden;
+       transform: translateX(0);
+    }
+    .exp-slide.hidden {
+       opacity: 0;
+       position: absolute;
+       top: 0; left: 0;
+       pointer-events: none;
+       transform: translateX(-30px);
+    }
+    .exp-slide.incoming {
+        opacity: 0;
+        transform: translateX(30px);
+    }
 
-    <body>
-        <header class="l-header" id="header">
-            <!-- Nav menu -->
-            <nav class="nav bd-container">
-                <a href="#" class="nav_logo">Léa GALLIER</a>
-                <div class="nav_menu" id="nav-menu">
-                    <ul class="nav_list">
+    /* Nav dots */
+    #nav-dots {
+      position: fixed; right: 20px; top: 50%; /* Moved slightly left */
+      transform: translateY(-50%); z-index: 50;
+      display: flex; flex-direction: column; gap: 15px;
+      align-items: flex-end;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end; /* Push dot to the right */
+      cursor: pointer;
+      /* Removed position: relative; */
+    }
+    .nav-item-dot {
+      width: 12px; height: 12px; background-color: rgba(128, 128, 128, 0.6);
+      border-radius: 50%; transition: all 0.3s ease;
+      border: 2px solid transparent;
+      flex-shrink: 0;
+      /* Removed z-index: 2; */
+      order: 2; /* Place dot after label */
+    }
+    .nav-item-label {
+      /* Removed absolute positioning and related styles */
+      margin-right: 10px; /* Space between label and dot */
+      padding: 2px 6px; /* Adjusted padding */
+      /* Optional: background for better readability */
+      /* background-color: rgba(50, 50, 50, 0.7); */
+      /* color: white; */
+      /* border-radius: 4px; */
+      font-size: 0.9rem; /* Slightly larger font */
+      white-space: nowrap;
+      /* Made always visible */
+      opacity: 1;
+      visibility: visible;
+      transition: color 0.3s ease, font-weight 0.3s ease; /* Transition color/weight */
+      order: 1; /* Place label before dot */
+      color: inherit; /* Inherit color from body */
+      /* Add specific dark mode color */
+      .dark & { 
+         color: rgba(229, 231, 235, 0.7); /* Lighter gray for dark mode */
+      }
+    }
+    /* Remove hover style that showed the label */
+    /* .nav-item:hover .nav-item-label { ... } */
 
-                        <li class="nav_item">
-                            <a href="#home" class="nav_link active-link">
-                                <i class="fa-solid fa-house nav_icon"></i>Home
-                            </a>
-                        </li>
+    /* Style for the active item */
+    .nav-item.active .nav-item-dot {
+      background-color: rgb(37 99 235);
+      border-color: rgba(55, 65, 81, 0.5); /* Darker border in light mode */
+      .dark & {
+         border-color: rgba(255, 255, 255, 0.8); /* Lighter border in dark mode */
+      }
+      transform: scale(1.3);
+    }
+    .nav-item.active .nav-item-label {
+        font-weight: 600; /* Semibold */
+        color: rgb(37 99 235); /* Blue color for active label */
+        .dark & {
+            color: rgb(96 165 250); /* Lighter blue for dark mode */
+        }
+    }
+    /* Add hover effect for non-active items */
+    .nav-item:not(.active):hover .nav-item-label {
+        color: rgb(55 65 81); /* Dark gray on hover */
+        .dark & {
+            color: rgb(209 213 219); /* Light gray on hover */
+        }
+    }
+    .nav-item:not(.active):hover .nav-item-dot {
+         background-color: rgba(107, 114, 128, 0.8);
+         .dark & {
+             background-color: rgba(156, 163, 175, 0.8);
+         }
+    }
 
-                        <li class="nav_item">
-                            <a href="#profile" class="nav_link">
-                                <i class="fa-solid fa-user nav_icon"></i>Profile
-                            </a>
-                        </li>
+    /* Button hover */
+    button, a.button-like {
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+    button:hover, a.button-like:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
 
-                        <li class="nav_item">
-                            <a href="#skills" class="nav_link">
-                                <i class="fa-solid fa-computer nav_icon"></i>Skills
-                            </a>
-                        </li>
+    /* Tag hover */
+    #focus li, #skills div p { /* Select paragraphs directly */
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+    #focus li:hover, #skills div p:hover {
+      transform: translateY(-3px);
+      /* Removing direct color change on hover as it might conflict with i18n */
+      /* color: rgb(59 130 246); */
+    }
+    /* Hover effect specifically for focus tags */
+    #focus li:hover {
+       color: rgb(59 130 246); /* Apply color change only to focus tags */
+       .dark & {
+          color: rgb(96 165 250);
+       }
+    }
 
-                        <li class="nav_item">
-                            <a href="#languages" class="nav_link">
-                                <i class="fa-solid fa-comments nav_icon"></i>Languages
-                            </a>
-                        </li>
+    /* Responsive navigation */
+    @media (max-width: 768px) {
+      #nav-dots {
+        right: 10px;
+        gap: 10px;
+      }
+      .nav-item-label {
+        font-size: 0.7rem;
+        padding: 2px 4px;
+        margin-right: 6px;
+      }
+      .nav-item-dot {
+        width: 10px;
+        height: 10px;
+      }
+    }
 
-                        <li class="nav_item">
-                            <a href="#experience" class="nav_link">
-                                <i class="fa-solid fa-briefcase nav_icon"></i>Experiences
-                            </a>
-                        </li>
+  </style>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans relative">
 
-                        <li class="nav_item">
-                            <a href="#certificates" class="nav_link">
-                                <i class="fa-solid fa-graduation-cap nav_icon"></i>Certificates
-                            </a>
-                        </li>
+  <!-- Theme and Language Toggle -->
+  <div class="absolute top-4 right-20 z-50 flex gap-2">
+    <button id="theme-toggle" aria-label="Toggle dark mode" data-i18n-aria-label="theme-toggle-label" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 p-2 rounded-full w-10 h-10 flex items-center justify-center">T</button>
+    <button id="language-toggle" aria-label="Toggle language" data-i18n-aria-label="language-toggle-label" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 p-2 rounded-full w-10 h-10 flex items-center justify-center">RU</button>
+  </div>
+  <!-- Section Nav Arrows (hidden, handled by dots now) -->
+  <!-- <button id="prev">...</button> -->
+  <!-- <button id="next">...</button> -->
 
-                        <li class="nav_item">
-                            <a href="#education" class="nav_link">
-                                <i class="fa-solid fa-book-bookmark nav_icon"></i>Education
-                            </a>
-                        </li>
+  <!-- Navigation Dots -->
+  <div id="nav-dots" role="navigation" aria-label="Page Sections">
+    <!-- Nav items will be generated by JS -->
+  </div>
 
-                        <li class="nav_item">
-                            <a href="#interests" class="nav_link">
-                                <i class="fa-solid fa-icons nav_icon"></i>Interests
-                            </a>
-                        </li>
+  <!-- Hero Section -->
+  <section id="hero" class="section visible text-center px-4 bg-gray-50 dark:bg-gray-800">
+    <h1 class="text-5xl md:text-7xl font-bold mb-4" data-i18n="hero-title">Developer-Researcher</h1>
+    <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-6" data-i18n="hero-description">Building systems from scratch, diving into domains, and exploring cutting-edge tech</p>
+    <div class="space-x-4">
+      <a href="#" aria-label="Download Resume PDF" data-i18n-aria-label="hero-download-aria" class="button-like px-6 py-3 bg-blue-600 text-white rounded inline-block" data-i18n="hero-download">Download PDF</a>
+      <a href="mailto:your.email@example.com" aria-label="Contact me via email" data-i18n-aria-label="hero-contact-aria" class="button-like px-6 py-3 border border-blue-600 text-blue-600 rounded hover:bg-blue-50 dark:hover:bg-gray-700 inline-block" data-i18n="hero-contact">Contact me</a>
+    </div>
+  </section>
 
-                    </ul>
-                </div>
+  <!-- About Me -->
+  <section id="about" class="section container mx-auto px-4 text-center max-w-3xl">
+    <h2 class="text-3xl font-bold mb-4" data-i18n="about-title">About Me</h2>
+    <p class="text-gray-700 dark:text-gray-300" data-i18n="about-text">Full-Stack Developer with a research mindset. 6+ years of experience in backend/web systems with deep involvement in drones, education platforms, and AI-driven automation. Comfortable designing systems from scratch, analyzing domains, and applying modern approaches (AI/LLM, telemetry, optimization).</p>
+  </section>
 
-                <div class="nav_toggle" id="nav-toggle">
-                    <i class="fa-solid fa-bars"></i>
-                </div>
-            </nav>
-        </header>
+  <!-- Experience -->
+  <section id="experience" class="section w-full bg-gray-50 dark:bg-gray-800 px-4">
+    <div class="container mx-auto flex flex-col items-center">
+      <h2 class="text-3xl font-bold mb-8" data-i18n="experience-title">Experience</h2>
+      <div id="exp-slider" aria-live="polite" class="relative w-full max-w-3xl text-center" style="min-height: 200px;" tabindex="0">
+        <div class="sr-only" data-i18n="exp-aria-navigation">Use left and right arrow keys to navigate experience slides</div>
+        <div class="exp-slide visible">
+          <h3 class="text-2xl font-semibold">aOrion <span class="text-gray-500 dark:text-gray-400" data-i18n="exp-aorion-date">Sep 2019 – Aug 2022</span></h3>
+          <p class="mt-2 text-gray-700 dark:text-gray-300" data-i18n="exp-aorion-desc">Built MVP drone platform from scratch. 3D flight visualization, backend architecture, deployment.</p>
+          <p class="mt-1 text-gray-600 dark:text-gray-400"><span class="font-semibold" data-i18n="exp-team-size">Team size:</span> 5</p>
+          <p class="mt-1"><span class="font-semibold" data-i18n="exp-tech">Tech:</span> ASP.NET Core, Vue.js, MQTT</p>
+        </div>
+        <div class="exp-slide hidden">
+          <h3 class="text-2xl font-semibold">Dronehub <span class="text-gray-500 dark:text-gray-400" data-i18n="exp-dronehub-date">Dec 2022 – May 2023</span></h3>
+          <p class="mt-2 text-gray-700 dark:text-gray-300" data-i18n="exp-dronehub-desc">ROS2 companion computer for drones. Backend developer with R&D focus.</p>
+          <p class="mt-1 text-gray-600 dark:text-gray-400"><span class="font-semibold" data-i18n="exp-team-size">Team size:</span> 3</p>
+          <p class="mt-1"><span class="font-semibold" data-i18n="exp-tech">Tech:</span> ROS2, Python, C++</p>
+        </div>
+        <div class="exp-slide hidden">
+          <h3 class="text-2xl font-semibold">Smile-tech <span class="text-gray-500 dark:text-gray-400" data-i18n="exp-smiletech-date">May 2024 – Jan 2025</span></h3>
+          <p class="mt-2 text-gray-700 dark:text-gray-300" data-i18n="exp-smiletech-desc">Educational automation system with LLM and optimization.</p>
+          <p class="mt-1 text-gray-600 dark:text-gray-400"><span class="font-semibold" data-i18n="exp-team-size">Team size:</span> 4</p>
+          <p class="mt-1"><span class="font-semibold" data-i18n="exp-tech">Tech:</span> Python, LangChain, OpenAI</p>
+        </div>
+        <div class="exp-slide hidden">
+          <h3 class="text-2xl font-semibold">IT House Group <span class="text-gray-500 dark:text-gray-400" data-i18n="exp-ithouse-date">2-month project</span></h3>
+          <p class="mt-2 text-gray-700 dark:text-gray-300" data-i18n="exp-ithouse-desc">Patient management system. Performed business analysis and tech selection.</p>
+          <p class="mt-1 text-gray-600 dark:text-gray-400"><span class="font-semibold" data-i18n="exp-team-size">Team size:</span> 2</p>
+          <p class="mt-1"><span class="font-semibold" data-i18n="exp-tech">Tech:</span> C#, ASP.NET Core, SQL Server</p>
+        </div>
+        <button id="exp-prev" aria-label="Previous experience" data-i18n-aria-label="exp-prev-aria" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-300 dark:bg-gray-700 p-2 rounded-full z-10 hover:bg-gray-400 dark:hover:bg-gray-600">‹</button>
+        <button id="exp-next" aria-label="Next experience" data-i18n-aria-label="exp-next-aria" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-300 dark:bg-gray-700 p-2 rounded-full z-10 hover:bg-gray-400 dark:hover:bg-gray-600">›</button>
+      </div>
+    </div>
+  </section>
 
-        <main class="l-main bd-container">
-            <!-- Resume CV -->
-            <div class="resume" id="area-cv">
-                <div class="resume_left">
+  <!-- R&D & Learning Lab -->
+  <section id="lab" class="section container mx-auto px-4 text-center max-w-3xl">
+    <h2 class="text-3xl font-bold mb-4" data-i18n="lab-title">R&D & Learning Lab</h2>
+    <ul class="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300 inline-block text-left">
+      <li data-i18n="lab-item-1">LLM (DeepSeek, OpenAI, Gemini)</li>
+      <li data-i18n="lab-item-2">Knowledge graph assistants</li>
+      <li data-i18n="lab-item-3">Embedding pipelines</li>
+      <li data-i18n="lab-item-4">LangChain and orchestration</li>
+      <li data-i18n="lab-item-5">Kubernetes (learning)</li>
+    </ul>
+  </section>
 
-                    <!-- HOME -->
-                    <section class="home" id="home">
-                        <div class="home_container section bd-grid">
+  <!-- Skills & Tech Stack -->
+  <section id="skills" class="section w-full bg-gray-50 dark:bg-gray-800 px-4">
+    <div class="container mx-auto flex flex-col items-center">
+      <h2 class="text-3xl font-bold mb-8" data-i18n="skills-title">Skills & Tech Stack</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-gray-700 dark:text-gray-300 w-full max-w-4xl">
+        <div> <h4 class="font-semibold mb-2" data-i18n="skills-languages-title">Languages</h4> <p data-i18n="skills-languages-list">C#, Python, JS/TS</p> </div>
+        <div> <h4 class="font-semibold mb-2" data-i18n="skills-frameworks-title">Frameworks</h4> <p data-i18n="skills-frameworks-list">ASP.NET, EF, Vue, Angular, MQTT, ROS2</p> </div>
+        <div> <h4 class="font-semibold mb-2" data-i18n="skills-databases-title">Databases</h4> <p data-i18n="skills-databases-list">PostgreSQL, MSSQL, MongoDB</p> </div>
+        <div> <h4 class="font-semibold mb-2" data-i18n="skills-infra-title">Infra</h4> <p data-i18n="skills-infra-list">Docker, Git, CI/CD, Linux</p> </div>
+        <div> <h4 class="font-semibold mb-2" data-i18n="skills-ai-title">AI</h4> <p data-i18n="skills-ai-list">LLM pipelines, prompt design</p> </div>
+        <div> <h4 class="font-semibold mb-2" data-i18n="skills-learning-title">Currently Learning</h4> <p data-i18n="skills-learning-list">Kubernetes, LangChain, Event-driven arch.</p> </div>
+      </div>
+    </div>
+  </section>
 
-                            <div class="home_data bd-grid">
-                                <img src="assets/pictures/profile.png" alt="Icon picture" class="home_img" id="home-img">
-                                <!--<img alt="Icon picture" class="home_img" id="home-img">-->
-                                <h1 class="home_title">LEA <b>GALLIER</b></h1>
-                                <h3 class="home_profession">Analyst developer</h3>
-                                <div>
-                                    <a download="" id="download-button" class="home_button-movil">Download</a>
-                                </div>
-                            </div>
+  <!-- Interests & Focus -->
+  <section id="focus" class="section container mx-auto px-4 text-center max-w-3xl">
+    <h2 class="text-3xl font-bold mb-4" data-i18n="focus-title">Interests & Focus</h2>
+    <ul class="flex flex-wrap justify-center gap-4 text-gray-700 dark:text-gray-300">
+      <li class="px-3 py-1 bg-blue-100 dark:bg-blue-900 rounded-full" data-i18n="focus-ai">AI</li>
+      <li class="px-3 py-1 bg-blue-100 dark:bg-blue-900 rounded-full" data-i18n="focus-autonomous">Autonomous Systems</li>
+      <li class="px-3 py-1 bg-blue-100 dark:bg-blue-900 rounded-full" data-i18n="focus-infra">Smart Infrastructure</li>
+      <li class="px-3 py-1 bg-blue-100 dark:bg-blue-900 rounded-full" data-i18n="focus-rd">R&D</li>
+      <li class="px-3 py-1 bg-blue-100 dark:bg-blue-900 rounded-full" data-i18n="focus-humanity">Tech-for-Humanity</li>
+    </ul>
+  </section>
 
-                            <div class="home_address bd-grid">
-                                <span class="home_information">
-                                    <i class="fa-solid fa-location-dot home_icon"></i> Port-Jérôme sur Seine - France
-                                </span>
-                                <span class="home_information">
-                                    <a href="mailto:leagallier.lag@gmail.com" class="home_link">
-                                        <i class="fa-solid fa-envelope home_icon"></i> leagallier.lag@gmail.com
-                                    </a>
-                                </span>
-                                <span class="home_information">
-                                    <a href="tel:+33611451165" class="home_link">
-                                        <i class="fa-solid fa-phone home_icon"></i> 06.11.45.11.65
-                                    </a>
-                                </span>
-                            </div>
-                        </div>
+  <!-- Footer / Contact -->
+  <footer id="contact" class="section w-full bg-gray-800 text-gray-100 text-center px-4">
+    <h2 class="text-2xl font-semibold mb-4" data-i18n="contact-title">Get in Touch</h2>
+    <p><span data-i18n="contact-email">Email: </span><a href="mailto:your.email@example.com" class="underline hover:text-blue-400 transition">your.email@example.com</a></p>
+    <p><span data-i18n="contact-github">GitHub: </span><a href="https://github.com/yourusername" class="underline hover:text-blue-400 transition" target="_blank">github.com/yourusername</a></p>
+    <p class="mt-6"><a href="#" aria-label="Download Resume PDF" data-i18n-aria-label="contact-download-aria" class="button-like px-6 py-3 bg-blue-600 text-white rounded inline-block" data-i18n="contact-download">Download PDF Resume</a></p>
+  </footer>
 
-                        <!-- Theme change button -->
-                        <i class="fa-solid fa-moon change-theme" title="Theme" id="theme-button"></i>
+  <!-- Theme Toggle Script -->
+  <script>
+    const themeToggleButton = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
+    if (themeToggleButton) {
+        themeToggleButton.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+        });
+    }
+  </script>
 
-                        <!-- Button to generate and download the pdf. Available for desktop. -->
-                        <i class="fa-solid fa-download generate-pdf" title="Generate PDF" id="resume-button"></i>
+  <!-- Language Toggle Script -->
+  <script>
+    const languageToggleButton = document.getElementById('language-toggle');
+    const translations = {
+      'ru': {
+        'page-title': 'Резюме | Developer-Researcher',
+        'theme-toggle-label': 'Переключить темную тему',
+        'language-toggle-label': 'Переключить язык',
+        'hero-title': 'Developer-Researcher',
+        'hero-description': 'Создаю системы с нуля, погружаюсь в предметные области и исследую передовые технологии',
+        'hero-download': 'Скачать PDF',
+        'hero-download-aria': 'Скачать резюме в PDF',
+        'hero-contact': 'Связаться',
+        'hero-contact-aria': 'Связаться со мной по email',
+        'about-title': 'Обо мне',
+        'about-text': 'Full-Stack разработчик с исследовательским подходом. Более 6 лет опыта в backend/web системах, глубокое участие в проектах по дронам, образовательным платформам и автоматизации на базе ИИ. Уверенно проектирую системы с нуля, анализирую предметные области и применяю современные подходы (AI/LLM, телеметрия, оптимизация).',
+        'experience-title': 'Опыт работы',
+        'exp-aorion-date': 'Сен 2019 – Авг 2022',
+        'exp-aorion-desc': 'Создал MVP платформы для дронов с нуля. 3D-визуализация полетов, архитектура бэкенда, развертывание.',
+        'exp-dronehub-date': 'Дек 2022 – Май 2023',
+        'exp-dronehub-desc': 'ROS2 companion computer для дронов. Бэкенд-разработчик с фокусом на R&D.',
+        'exp-smiletech-date': 'Май 2024 – Янв 2025',
+        'exp-smiletech-desc': 'Система автоматизации образования с LLM и оптимизацией.',
+        'exp-ithouse-date': '2-месячный проект',
+        'exp-ithouse-desc': 'Система управления пациентами. Провел бизнес-анализ и выбор технологий.',
+        'exp-team-size': 'Размер команды:',
+        'exp-tech': 'Технологии:',
+        'exp-prev-aria': 'Предыдущий опыт',
+        'exp-next-aria': 'Следующий опыт',
+        'lab-title': 'R&D и Лаборатория обучения',
+        'lab-item-1': 'LLM (DeepSeek, OpenAI, Gemini)',
+        'lab-item-2': 'Ассистенты на графах знаний',
+        'lab-item-3': 'Пайплайны для эмбеддингов',
+        'lab-item-4': 'LangChain и оркестрация',
+        'lab-item-5': 'Kubernetes (изучаю)',
+        'skills-title': 'Навыки и Технологии',
+        'skills-languages-title': 'Языки',
+        'skills-languages-list': 'C#, Python, JS/TS',
+        'skills-frameworks-title': 'Фреймворки',
+        'skills-frameworks-list': 'ASP.NET, EF, Vue, Angular, MQTT, ROS2',
+        'skills-databases-title': 'Базы данных',
+        'skills-databases-list': 'PostgreSQL, MSSQL, MongoDB',
+        'skills-infra-title': 'Инфраструктура',
+        'skills-infra-list': 'Docker, Git, CI/CD, Linux',
+        'skills-ai-title': 'ИИ',
+        'skills-ai-list': 'LLM пайплайны, дизайн промптов',
+        'skills-learning-title': 'Сейчас изучаю',
+        'skills-learning-list': 'Kubernetes, LangChain, Событийно-ориентированная арх.',
+        'focus-title': 'Интересы и Фокус',
+        'focus-ai': 'ИИ',
+        'focus-autonomous': 'Автономные системы',
+        'focus-infra': 'Умная инфраструктура',
+        'focus-rd': 'R&D',
+        'focus-humanity': 'Технологии для людей',
+        'contact-title': 'Связаться',
+        'contact-email': 'Email: ',
+        'contact-github': 'GitHub: ',
+        'contact-download': 'Скачать PDF резюме',
+        'contact-download-aria': 'Скачать резюме в PDF',
+        'nav-home': 'Главная',
+        'nav-about': 'Обо мне',
+        'nav-experience': 'Опыт',
+        'nav-lab': 'R&D Лаб',
+        'nav-skills': 'Навыки',
+        'nav-interests': 'Интересы',
+        'nav-contact': 'Контакты',
+        'nav-goto-prefix': 'Перейти к разделу',
+        'exp-aria-active': 'Текущий слайд:',
+        'exp-aria-total': 'из',
+        'exp-aria-navigation': 'Используйте стрелки влево и вправо для навигации по слайдам опыта работы'
+      },
+      'en': {
+        'page-title': 'Resume | Developer-Researcher',
+        'theme-toggle-label': 'Toggle dark mode',
+        'language-toggle-label': 'Toggle language',
+        'hero-title': 'Developer-Researcher',
+        'hero-description': 'Building systems from scratch, diving into domains, and exploring cutting-edge tech',
+        'hero-download': 'Download PDF',
+        'hero-download-aria': 'Download Resume PDF',
+        'hero-contact': 'Contact me',
+        'hero-contact-aria': 'Contact me via email',
+        'about-title': 'About Me',
+        'about-text': 'Full-Stack Developer with a research mindset. 6+ years of experience in backend/web systems with deep involvement in drones, education platforms, and AI-driven automation. Comfortable designing systems from scratch, analyzing domains, and applying modern approaches (AI/LLM, telemetry, optimization).',
+        'experience-title': 'Experience',
+        'exp-aorion-date': 'Sep 2019 – Aug 2022',
+        'exp-aorion-desc': 'Built MVP drone platform from scratch. 3D flight visualization, backend architecture, deployment.',
+        'exp-dronehub-date': 'Dec 2022 – May 2023',
+        'exp-dronehub-desc': 'ROS2 companion computer for drones. Backend developer with R&D focus.',
+        'exp-smiletech-date': 'May 2024 – Jan 2025',
+        'exp-smiletech-desc': 'Educational automation system with LLM and optimization.',
+        'exp-ithouse-date': '2-month project',
+        'exp-ithouse-desc': 'Patient management system. Performed business analysis and tech selection.',
+        'exp-team-size': 'Team size:',
+        'exp-tech': 'Tech:',
+        'exp-prev-aria': 'Previous experience',
+        'exp-next-aria': 'Next experience',
+        'lab-title': 'R&D & Learning Lab',
+        'lab-item-1': 'LLM (DeepSeek, OpenAI, Gemini)',
+        'lab-item-2': 'Knowledge graph assistants',
+        'lab-item-3': 'Embedding pipelines',
+        'lab-item-4': 'LangChain and orchestration',
+        'lab-item-5': 'Kubernetes (learning)',
+        'skills-title': 'Skills & Tech Stack',
+        'skills-languages-title': 'Languages',
+        'skills-languages-list': 'C#, Python, JS/TS',
+        'skills-frameworks-title': 'Frameworks',
+        'skills-frameworks-list': 'ASP.NET, EF, Vue, Angular, MQTT, ROS2',
+        'skills-databases-title': 'Databases',
+        'skills-databases-list': 'PostgreSQL, MSSQL, MongoDB',
+        'skills-infra-title': 'Infra',
+        'skills-infra-list': 'Docker, Git, CI/CD, Linux',
+        'skills-ai-title': 'AI',
+        'skills-ai-list': 'LLM pipelines, prompt design',
+        'skills-learning-title': 'Currently Learning',
+        'skills-learning-list': 'Kubernetes, LangChain, Event-driven arch.',
+        'focus-title': 'Interests & Focus',
+        'focus-ai': 'AI',
+        'focus-autonomous': 'Autonomous Systems',
+        'focus-infra': 'Smart Infrastructure',
+        'focus-rd': 'R&D',
+        'focus-humanity': 'Tech-for-Humanity',
+        'contact-title': 'Get in Touch',
+        'contact-email': 'Email: ',
+        'contact-github': 'GitHub: ',
+        'contact-download': 'Download PDF Resume',
+        'contact-download-aria': 'Download Resume PDF',
+        'nav-home': 'Home',
+        'nav-about': 'About',
+        'nav-experience': 'Experience',
+        'nav-lab': 'R&D Lab',
+        'nav-skills': 'Skills',
+        'nav-interests': 'Interests',
+        'nav-contact': 'Contact',
+        'nav-goto-prefix': 'Go to',
+        'exp-aria-active': 'Current slide:',
+        'exp-aria-total': 'of',
+        'exp-aria-navigation': 'Use left and right arrow keys to navigate experience slides'
+      }
+    };
+    let currentLanguage = localStorage.getItem('language') || 'ru'; // Default to Russian
 
-                    </section>
+    function updateLanguage() {
+      const elements = document.querySelectorAll('[data-i18n]');
+      elements.forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[currentLanguage] && translations[currentLanguage][key]) {
+          element.textContent = translations[currentLanguage][key];
+        } else {
+            console.warn(`Missing translation for key: ${key} in language: ${currentLanguage}`);
+        }
+      });
 
-                    <!-- SOCIAL -->
-                    <section class="social section">
-                        <h2 class="section-title">Social</h2>
+      // Handle aria-label translations
+      const ariaElements = document.querySelectorAll('[data-i18n-aria-label]');
+      ariaElements.forEach(element => {
+          const key = element.getAttribute('data-i18n-aria-label');
+          if (translations[currentLanguage] && translations[currentLanguage][key]) {
+              element.setAttribute('aria-label', translations[currentLanguage][key]);
+          } else {
+              console.warn(`Missing aria-label translation for key: ${key} in language: ${currentLanguage}`);
+          }
+      });
 
-                        <div class="social_container bd-grid">
-                            <a href="https://github.com/LeaG76" target="_blank" class="social_link">
-                                <i class="fa-brands fa-github social_icon"></i> @Leag76
-                            </a>
-                            <a href="https://codepen.io/leag76" target="_blank" class="social_link">
-                                <i class="fa-brands fa-codepen social_icon"></i> @leag76
-                            </a>
-                            <a href="https://www.linkedin.com/in/leagallier76/" target="_blank" class="social_link">
-                                <i class="fa-brands fa-linkedin social_icon"></i> leagallier76
-                            </a>
-                        </div>
-                    </section>
+      // Update page title
+      const pageTitle = document.querySelector('title[data-i18n]');
+      if(pageTitle) {
+          const key = pageTitle.getAttribute('data-i18n');
+          if (translations[currentLanguage] && translations[currentLanguage][key]) {
+              document.title = translations[currentLanguage][key];
+          }
+      }
 
-                    <!-- PROFILE -->
-                    <section class="profile section" id="profile">
-                        <h2 class="section-title">Profile</h2>
+      // Update html lang attribute
+      document.documentElement.lang = currentLanguage;
 
-                        <p class="profile_description">
-                            I'm actually a student in computer science at the University of Le Havre Normandie. This year is
-                            my last year of master's degree in computer science at the university. But this year I also
-                            joined the IES Ingénierie team by becoming an analyst developer in work-study training.
-                        </p>
-                    </section>
+      // Update language toggle button text
+      languageToggleButton.textContent = currentLanguage === 'ru' ? 'EN' : 'RU'; // Show the *other* language
+      languageToggleButton.setAttribute('aria-label', translations[currentLanguage]['language-toggle-label'] || 'Toggle language'); // Update aria-label too
 
-                    <!-- SKILLS  -->
-                    <section class="skills section" id="skills">
-                        <h2 class="section-title">Skills</h2>
-                        <div class="skills_container">
-                            <div class="skills_content bd-grid">
-                                <div class="skills_name">
-                                    <span class="skills_text">CSS</span>
-                                    <div class="skills_box">
-                                        <span class="skills_progress" style="width: 85%;"></span>
-                                    </div>
-                                </div>
-                                <div class="skills_name">
-                                    <span class="skills_text">Git</span>
-                                    <div class="skills_box">
-                                        <span class="skills_progress" style="width: 75%;"></span>
-                                    </div>
-                                </div>
-                                <div class="skills_name">
-                                    <span class="skills_text">HTML</span>
-                                    <div class="skills_box">
-                                        <span class="skills_progress" style="width: 95%;"></span>
-                                    </div>
-                                </div>
-                                <div class="skills_name">
-                                    <span class="skills_text">Javascript</span>
-                                    <div class="skills_box">
-                                        <span class="skills_progress" style="width: 80%;"></span>
-                                    </div>
-                                </div>
-                                <div class="skills_name">
-                                    <span class="skills_text">MySQL</span>
-                                    <div class="skills_box">
-                                        <span class="skills_progress" style="width: 70%;"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+      // After switching to a new language, update document direction if needed
+      // (for potential future support of RTL languages like Arabic)
+      // document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
 
-                    </section>
+      localStorage.setItem('language', currentLanguage);
 
-                    <!-- LANGUAGES -->
-                    <section class="languages section" id="languages">
-                        <h2 class="section-title">Languages</h2>
+      // Update experience slider ARIA attributes after language change
+      const expSlider = document.getElementById('exp-slider');
+      if (expSlider && 'currentExpIndex' in window) {
+        const totalSlides = document.querySelectorAll('.exp-slide').length;
+        const activeText = translations[currentLanguage]['exp-aria-active'] || 'Current slide:';
+        const totalText = translations[currentLanguage]['exp-aria-total'] || 'of';
+        expSlider.setAttribute('aria-label', `${activeText} ${currentExpIndex + 1} ${totalText} ${totalSlides}`);
+      }
 
-                        <div class="languages_container">
-                            <ul class="languages_content bd-grid">
-                                <li class="languages_name">
-                                    <span class="languages_text">French</span>
-                                    <span class="languages_stars">
-                                        <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                    </span>
-                                </li>
-                                <li class="languages_name">
-                                    <span class="languages_text">English</span>
-                                    <span class="languages_stars">
-                                        <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star languages_stars_checked"></i>
-                                        <i class="fa-solid fa-star languages_stars_checked"></i>
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
-                    </section>
+      // Update nav dot labels (since they are generated dynamically)
+      if (typeof updateNavDotLabels === 'function') {
+          updateNavDotLabels();
+      }
+    }
 
-                </div>
+    if (languageToggleButton) {
+      languageToggleButton.addEventListener('click', () => {
+        currentLanguage = currentLanguage === 'ru' ? 'en' : 'ru';
+        updateLanguage();
+      });
+      // Initial call will be made after navDots are created
+    }
 
-                <div class="resume_right">
+    const sections = document.querySelectorAll('.section');
+    const navDotsContainer = document.getElementById('nav-dots');
+    let currentSectionIndex = 0;
+    let isNavigating = false;
+    const navAnimationDuration = 600;
 
-                    <!-- EXPERIENCE -->
-                    <section class="experience section" id="experience">
-                        <h2 class="section-title">Experience</h2>
+    // --- Mapping Section IDs to Translation Keys ---
+    const sectionTitleKeys = {
+      'hero': 'nav-home',
+      'about': 'nav-about',
+      'experience': 'nav-experience',
+      'lab': 'nav-lab',
+      'skills': 'nav-skills',
+      'focus': 'nav-interests',
+      'contact': 'nav-contact'
+    };
 
-                        <div class="experience_container bd-grid">
-                            <div class="experience_content">
-                                <div class="experience_time">
-                                    <span class="experience_rounder"></span>
-                                    <span class="experience_line"></span>
-                                </div>
-                                <div class="experience_data bd-grid">
-                                    <h3 class="experience_title">ANALYST PROGRAMMER</h3>
-                                    <span class="experience_company">Sandwichcourse | IES Ingénierie - France</span>
-                                    <span class="experience_year">October 2022 - present</span>
-                                    <p class="experience_description">
-                                        Work in this company dedicating the best responsibility in the area that
-                                        corresponds, delivering the best results for the company and improving productivity.
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="experience_content">
-                                <div class="experience_time">
-                                    <span class="experience_rounder"></span>
-                                </div>
-                                <div class="experience_data bd-grid">
-                                    <h3 class="experience_title">ANALYST PROGRAMMER</h3>
-                                    <span class="experience_company">Internship | IES Ingénierie - France</span>
-                                    <span class="experience_year">April 2021 - June 2021</span>
-                                    <p class="experience_description">
-                                        Work in this company dedicating the best responsibility in the area that
-                                        corresponds, delivering the best results for the company and improving productivity.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+    if (navDotsContainer && sections.length > 0) {
+        // --- Create Nav Items (Dot + Label) ---
+        sections.forEach((section, index) => {
+            const sectionId = section.id;
+            const titleKey = sectionTitleKeys[sectionId] || `Section ${index + 1}`; // Use key now
+            // Get initial title based on current language at creation time
+            const initialTitle = (translations[currentLanguage] && translations[currentLanguage][titleKey]) || `Section ${index + 1}`;
+            const initialAriaLabel = `Go to ${initialTitle} section`; // Simple concatenation for now
 
-                    <!-- CERTIFICATES -->
-                    <section class="certificate section" id="certificates">
-                        <h2 class="section-title">Certificates</h2>
+            const navItem = document.createElement('div');
+            navItem.classList.add('nav-item');
+            navItem.setAttribute('role', 'button');
+            navItem.tabIndex = 0; // Make focusable
+            // Set initial aria-label, will be updated by updateNavDotLabels
+            navItem.setAttribute('aria-label', initialAriaLabel);
+            navItem.setAttribute('data-nav-id', sectionId); // Store section id for label updates
+            navItem.addEventListener('click', () => showSection(index));
+            navItem.addEventListener('keydown', (e) => {
+               if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  showSection(index);
+               }
+            });
 
-                        <div class="certificate_container bd-grid">
-                            <div class="certificate_content">
-                                <div class="certificate_item">
-                                    <span class="certificate_rounder"></span>
-                                </div>
-                                <div class="certificate_data bd-grid">
-                                    <h3 class="certificate_year">2023</h3>
-                                    <span class="certificate_title">Masters in Computer Science</span>
-                                </div>
-                            </div>
-                            <div class="certificate_content">
-                                <div class="certificate_item">
-                                    <span class="certificate_rounder"></span>
-                                </div>
-                                <div class="certificate_data bd-grid">
-                                    <h3 class="certificate_year">2021</h3>
-                                    <span class="certificate_title">Bachelor in Computer Science
-                                        <span class="certificate_honours">with honours</span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="certificate_content">
-                                <div class="certificate_item">
-                                    <span class="certificate_rounder"></span>
-                                </div>
-                                <div class="certificate_data bd-grid">
-                                    <h3 class="certificate_year">2018</h3>
-                                    <span class="certificate_title">High School diploma in Sciences, speciality Mathematics
-                                        <span class="certificate_honours">with honours</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+            const dotSpan = document.createElement('span');
+            dotSpan.classList.add('nav-item-dot');
+            dotSpan.setAttribute('aria-hidden', 'true');
 
-                    <!-- EDUCATION -->
-                    <section class="education section" id="education">
-                        <h2 class="section-title">Education</h2>
+            const labelSpan = document.createElement('span');
+            labelSpan.classList.add('nav-item-label');
+            labelSpan.textContent = initialTitle; // Set initial text
+            // Add data-i18n attribute to the label itself for potential future direct targeting
+            labelSpan.setAttribute('data-i18n', titleKey);
 
-                        <div class="education_container bd-grid">
-                            <div class="education_content">
-                                <div class="education_time">
-                                    <span class="education_rounder"></span>
-                                    <span class="education_line"></span>
-                                </div>
-                                <div class="education_data bd-grid">
-                                    <h3 class="education_title">Masters in Computer Science</h3>
-                                    <span class="education_studies">Université Le Havre Normandie - France</span>
-                                    <span class="education_year">2021 - 2023</span>
-                                </div>
-                            </div>
-                            <div class="education_content">
-                                <div class="education_time">
-                                    <span class="education_rounder"></span>
-                                    <span class="education_line"></span>
-                                </div>
-                                <div class="education_data bd-grid">
-                                    <h3 class="education_title">Bachelor in Computer Science</h3>
-                                    <span class="education_studies">Université Le Havre Normandie - France</span>
-                                    <span class="education_year">2018 - 2021</span>
-                                </div>
-                            </div>
-                            <div class="education_content">
-                                <div class="education_time">
-                                    <span class="education_rounder"></span>
-                                </div>
-                                <div class="education_data bd-grid">
-                                    <h3 class="education_title">High School diploma in Sciences, speciality Mathematics</h3>
-                                    <span class="education_studies">Lycée Guillaume Le Conquérant - France</span>
-                                    <span class="education_year">2015 - 2018</span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+            navItem.appendChild(labelSpan);
+            navItem.appendChild(dotSpan);
+            navDotsContainer.appendChild(navItem);
+        });
+        const navItems = navDotsContainer.querySelectorAll('.nav-item');
 
-                    <!-- INTERESTS -->
-                    <section class="interests section" id="interests">
-                        <h2 class="section-title">Interests</h2>
-                        <div class="interests_container bd-grid">
-                            <div class="interests_content">
-                                <i class="fa-solid fa-paw interests_icon"></i>
-                                <span class="interests_name">Animals</span>
-                            </div>
-                            <div class="interests_content">
-                                <i class="fa-solid fa-dragon interests_icon"></i>
-                                <span class="interests_name">Dinosaurs</span>
-                            </div>
-                            <div class="interests_content">
-                                <i class="fa-solid fa-film interests_icon"></i>
-                                <span class="interests_name">Movies/Series</span>
-                            </div>
-                            <div class="interests_content">
-                                <i class="fa-solid fa-leaf interests_icon"></i>
-                                <span class="interests_name">Nature</span>
-                            </div>
-                            <div class="interests_content">
-                                <i class="fa-solid fa-code interests_icon"></i>
-                                <span class="interests_name">Program</span>
-                            </div>
-                            <div class="interests_content">
-                                <i class="fa-solid fa-gamepad interests_icon"></i>
-                                <span class="interests_name">Video games</span>
-                            </div>
-                        </div>
-                    </section>
+        // Function to update nav dot labels and aria-labels based on current language
+        function updateNavDotLabels() {
+            if (!navItems) return;
+            navItems.forEach(item => {
+                const sectionId = item.getAttribute('data-nav-id');
+                const labelSpan = item.querySelector('.nav-item-label');
+                const titleKey = sectionTitleKeys[sectionId];
 
-                </div>
-            </div>
-        </main>
+                if (labelSpan && titleKey && translations[currentLanguage] && translations[currentLanguage][titleKey]) {
+                    const newTitle = translations[currentLanguage][titleKey];
+                    labelSpan.textContent = newTitle;
+                    // Update aria-label as well
+                    const gotoPrefix = translations[currentLanguage]['nav-goto-prefix'] || 
+                                      (currentLanguage === 'ru' ? 'Перейти к разделу' : 'Go to');
+                    
+                    item.setAttribute('aria-label', `${gotoPrefix} ${newTitle}`); 
+                }
+            });
+        }
 
-        <a href="#" class="scrolltop" id="scroll-top">
-            <i class="fa-solid fa-arrow-up scrolltop_icon"></i>
-        </a>
 
-        <!-- HTML2PDF.js -->
-            <!-- Version 0.8.0 -->
-        <!-- <script src="assets/javascripts/html2pdf.v0.8.0.bundle.min.js"></script> -->
-            <!-- Version 0.9.3 -->
-        <script src="assets/javascripts/html2pdf.v0.9.3.bundle.min.js"></script>
+        function updateNavDots() {
+            if (!navItems) return;
+            navItems.forEach((item, index) => {
+                item.classList.toggle('active', index === currentSectionIndex);
+                item.setAttribute('aria-current', index === currentSectionIndex ? 'page' : 'false');
+            });
+        }
 
-        <!-- Main Javascript file -->
-        <script src="assets/javascripts/main.js"></script>
-    </body>
+        // --- showSection function ---
+        function showSection(index) {
+            if (!sections || sections.length === 0) return;
+            const nextSectionIndex = (index + sections.length) % sections.length;
+            if (nextSectionIndex === currentSectionIndex || isNavigating) return;
 
+            isNavigating = true;
+            const currentSectionElement = sections[currentSectionIndex];
+            const nextSectionElement = sections[nextSectionIndex];
+
+            // Apply exiting animation (optional, needs more CSS)
+            // if(currentSectionElement) {
+            //     currentSectionElement.classList.add('exiting'); // Needs corresponding CSS
+            // }
+
+            // Apply standard transition classes
+            if (currentSectionElement) {
+                 currentSectionElement.style.opacity = '0'; // Start fade out
+                 currentSectionElement.style.transform = 'translateY(-10px)'; // Optional move up
+                 setTimeout(() => {
+                      if(currentSectionElement) currentSectionElement.classList.remove('visible');
+                 }, navAnimationDuration / 2); // Remove visibility halfway
+            }
+
+            if (nextSectionElement) {
+                // Ensure it's ready for animation (opacity 0, translated)
+                nextSectionElement.classList.remove('visible'); // Ensure it's not visible initially if rapid switching
+                nextSectionElement.style.opacity = '0';
+                nextSectionElement.style.transform = 'translateY(20px)'; // Start from below
+
+                // Force reflow/repaint before adding 'visible' to trigger transition
+                void nextSectionElement.offsetWidth;
+
+                nextSectionElement.classList.add('visible'); // This class now controls the target state (opacity 1, transform 0)
+                // The transition is defined in the .section style block
+                nextSectionElement.style.opacity = '1';
+                nextSectionElement.style.transform = 'translateY(0)';
+
+            }
+
+
+            currentSectionIndex = nextSectionIndex;
+            updateNavDots();
+
+            setTimeout(() => {
+                isNavigating = false;
+                 // Clean up styles after transition
+                 sections.forEach((sec, idx) => {
+                   if (idx !== currentSectionIndex) {
+                      sec.classList.remove('visible'); // Ensure others are hidden
+                       // Reset styles if needed, handled by .section class mostly
+                       sec.style.opacity = '';
+                       sec.style.transform = '';
+                   } else {
+                       // Ensure active section styles are final
+                       sec.style.opacity = '';
+                       sec.style.transform = '';
+                   }
+                });
+            }, navAnimationDuration); // Use full duration
+        }
+
+        // --- Initial setup & Event Listeners ---
+        if (sections.length > 0) {
+            // Set initial visibility without transition on page load
+            sections.forEach((sec, idx) => {
+              if (idx === currentSectionIndex) {
+                sec.classList.add('visible');
+                 // Ensure initial state has correct styles without transition effect
+                 sec.style.transition = 'none'; // Temporarily disable transition
+                 sec.style.opacity = '1';
+                 sec.style.transform = 'translateY(0)';
+                 // Restore transition after a tick
+                 setTimeout(() => {
+                     sec.style.transition = '';
+                 }, 0);
+              } else {
+                sec.classList.remove('visible');
+              }
+            });
+        }
+        updateNavDots();
+        
+        // Initialize language AFTER navigation is set up
+        // Check if translation is already initialized
+        if (typeof updateLanguage === 'function') {
+            window.setTimeout(updateLanguage, 0); // Defer to next event loop
+        }
+
+        // --- Wheel Navigation ---
+        let wheelTimeout;
+        document.addEventListener('wheel', (e) => {
+            e.preventDefault(); // Prevent default page scroll
+            if (isNavigating) return; // Don't handle scroll if already animating
+
+            clearTimeout(wheelTimeout);
+            wheelTimeout = setTimeout(() => { // Debounce scroll events
+                if (e.deltaY > 0) {
+                    // Scroll down
+                    showSection(currentSectionIndex + 1);
+                } else {
+                    // Scroll up
+                    showSection(currentSectionIndex - 1);
+                }
+            }, 50); // Adjust debounce time as needed
+
+        }, { passive: false }); // Need passive: false to preventDefault
+
+        // --- Keyboard Navigation ---
+         document.addEventListener('keydown', (e) => {
+             if (isNavigating) return;
+             let newIndex = currentSectionIndex;
+             if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                 newIndex++;
+             } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                 newIndex--;
+             } else if (e.key === 'Home') {
+                 newIndex = 0;
+             } else if (e.key === 'End') {
+                 newIndex = sections.length - 1;
+             } else {
+                 return; // Ignore other keys
+             }
+             e.preventDefault(); // Prevent default scrolling for handled keys
+             showSection(newIndex);
+         });
+
+
+    } // End if navDotsContainer
+
+    // --- Experience Slider ---
+    const expSlider = document.getElementById('exp-slider');
+    const expSlides = expSlider ? expSlider.querySelectorAll('.exp-slide') : [];
+    let currentExpIndex = 0;
+    let isSliding = false;
+
+    if (expSlider && expSlides.length > 0) {
+        function showExp(index) {
+            if (!expSlides || expSlides.length === 0) return;
+            const nextExpIndex = (index + expSlides.length) % expSlides.length;
+            if (nextExpIndex === currentExpIndex || isSliding) return;
+
+            isSliding = true;
+            const currentSlide = expSlides[currentExpIndex];
+            const nextSlide = expSlides[nextExpIndex];
+
+            // Обновление ARIA для доступности
+            const totalSlides = expSlides.length;
+            const activeText = translations[currentLanguage]['exp-aria-active'] || 'Current slide:';
+            const totalText = translations[currentLanguage]['exp-aria-total'] || 'of';
+            expSlider.setAttribute('aria-label', `${activeText} ${nextExpIndex + 1} ${totalText} ${totalSlides}`);
+
+            // Анимация слайдера с учетом направления
+            if (nextExpIndex > currentExpIndex || (currentExpIndex === expSlides.length - 1 && nextExpIndex === 0)) {
+                // Движение вправо
+                currentSlide.style.transform = 'translateX(-30px)';
+                currentSlide.style.opacity = '0';
+                
+                nextSlide.classList.remove('hidden');
+                nextSlide.style.transform = 'translateX(30px)'; // Начинаем справа
+                nextSlide.style.opacity = '0';
+                
+                // Форсируем reflow
+                void nextSlide.offsetWidth;
+                
+                // Анимируем появление следующего слайда
+                nextSlide.style.transform = 'translateX(0)';
+                nextSlide.style.opacity = '1';
+            } else {
+                // Движение влево
+                currentSlide.style.transform = 'translateX(30px)';
+                currentSlide.style.opacity = '0';
+                
+                nextSlide.classList.remove('hidden');
+                nextSlide.style.transform = 'translateX(-30px)'; // Начинаем слева
+                nextSlide.style.opacity = '0';
+                
+                // Форсируем reflow
+                void nextSlide.offsetWidth;
+                
+                // Анимируем появление следующего слайда
+                nextSlide.style.transform = 'translateX(0)';
+                nextSlide.style.opacity = '1';
+            }
+            
+            // После окончания анимации
+            setTimeout(() => {
+                if(currentSlide) {
+                    currentSlide.classList.add('hidden');
+                    currentSlide.style.transform = '';
+                    currentSlide.style.opacity = '';
+                }
+                
+                currentExpIndex = nextExpIndex;
+                isSliding = false;
+            }, 500); // Время анимации
+        }
+
+        // Также возможность управления слайдером с клавиатуры
+        expSlider.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                showExp(currentExpIndex - 1);
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                showExp(currentExpIndex + 1);
+            }
+        });
+
+        const expNextButton = document.getElementById('exp-next');
+        const expPrevButton = document.getElementById('exp-prev');
+        if (expNextButton && expPrevButton) {
+            expNextButton.addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                showExp(currentExpIndex + 1); 
+            });
+            
+            expPrevButton.addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                showExp(currentExpIndex - 1); 
+            });
+        }
+
+        // Инициализация слайдов
+        expSlides.forEach((slide, index) => {
+            if (index === 0) {
+                slide.classList.remove('hidden');
+                slide.style.opacity = '1';
+                slide.style.transform = 'translateX(0)';
+            } else {
+                slide.classList.add('hidden');
+                slide.style.opacity = '0';
+            }
+        });
+    } // End if expSlider
+  </script>
+</body>
 </html>
