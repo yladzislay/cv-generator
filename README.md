@@ -1,163 +1,188 @@
-<p align="center">
-  <h1 align="center">CV Generator</h1>
-  <h4 align="center">Resume CV with dark/light mode and PDF export</h4>
-</p>
+# Документация проекта
 
-<p align="center">
-  <a href="https://developer.mozilla.org/en-US/docs/Web/CSS">
-    <img alt="CSS3" src="https://img.shields.io/badge/-CSS3-0068BA?style=flat&logo=css3&logoColor=white" />
-  </a>
+## Бизнес-анализ
 
-  <a href="https://fontawesome.com/">
-    <img alt="FontAwesome" src="https://img.shields.io/badge/-Font_Awesome-2186DF?style=flat&logo=fontawesome&logoColor=white" />
-  </a>
+### Стратегические цели проекта
 
-  <a href="https://developer.mozilla.org/en-US/docs/Glossary/HTML5">
-    <img alt="HTML5" src="https://img.shields.io/badge/-HTML5-DD4D25?style=flat&logo=html5&logoColor=white" />
-  </a>
+Основываясь на высказанных пожеланиях, выделены следующие ключевые цели проекта:
 
-  <a href="https://ekoopmans.github.io/html2pdf.js/">
-    <img alt="html2pdf.js" src="https://img.shields.io/badge/-html2pdf.js-16866B?style=flat&logo=javascript&logoColor=white" />
-  </a>
-  
-  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">
-    <img alt="Javascript" src="https://img.shields.io/badge/-Javascript-EFD81D?style=flat&logo=javascript&logoColor=white" /> 
-  </a> 
-</p>
+1. **Профессиональная самопрезентация**
+   - Создать визуально впечатляющую визитную карточку, отражающую профессиональный уровень
+   - Демонстрировать технический уровень через качество реализации самого сайта
+   - Обеспечить полное представление о профессиональных навыках, опыте и возможностях
 
-<p align="center">
-  <img alt="Last commit" src="https://img.shields.io/github/last-commit/leag76/cv-generator?color=%23B5CDA3&logo=github&logoColor=white" />
-  <img alt="Commit activity" src="https://img.shields.io/github/commit-activity/y/leag76/cv-generator?color=%23A76844&logo=github&logoColor=white" />
-  <img alt="Repo size" src="https://img.shields.io/github/repo-size/leag76/cv-generator?color=%23C1AC95&logo=github&logoColor=white" />
-</p>
+2. **Технологическое портфолио**
+   - Представить технологии в виде наглядной карты компетенций с разделением по уровням экспертизы
+   - Отразить эволюцию навыков и интересов в области технологий
+   - Визуально выделить ключевые области экспертизы и направления развития
 
-## About
+3. **Инновационность и визуальное впечатление**
+   - Внедрить передовые подходы в дизайне и анимации для достижения "вау-эффекта"
+   - Использовать современные веб-технологии и передовые паттерны разработки
+   - Создать уникальный визуальный стиль, соответствующий личности автора
 
-CV Generator is an **HTML5**, **CSS3** and **Javascript** only project that allows you to create a modern, clean and personalized CV according to your tastes. It also allows you to have a CV in **dark mode** but also to be able to export it directly in **PDF** format.
+4. **Личностное и карьерное развитие**
+   - Отслеживать карьерный рост и профессиональное развитие
+   - Документировать рост экспертизы в разных областях
+   - Наглядно представлять перспективные направления интересов и исследований
 
-This project is obviously **responsive**: for *desktop*, *laptop* and *tablet* screens, the CV will be displayed in its classic form as a PDF. While for *mobile phone* screens, this one will be presented as a small showcase website.
+5. **Техническое превосходство**
+   - Демонстрировать исследовательский подход к разработке
+   - Подчеркнуть склонность к инновациям и передовым технологиям
+   - Отразить стремление быть на технологической передовой
 
-To export the CV in PDF format, the **html2pdf.js** library was used and the version is *0.9.3*. (this is the most stable version) html2pdf.js is a Client-side HTML-to-PDF rendering using pure JS, she converts any webpage or element into a printable PDF entirely client-side using **html2canvas** and **jsPDF**. ([html2pdf.js Github repo](https://github.com/eKoopmans/html2pdf.js "Go to the html2pdf.js Github repo")).
+### Функциональные требования
 
-For the icons, the Internet's icon library and toolkit **Font Awesome** was used.
+Для достижения указанных целей необходимо реализовать:
 
-> <sub>The project was created by inspiring me from the <a href="https://github.com/bedimcode">bedimcode</a> project called **Responsive Resume Cv Smith** (project link: <a href="https://github.com/bedimcode/responsive-resume-cv-smith">responsive-resume-cv-smith</a>) and watching the associated Youtube video of Bedimcode: <a href="https://www.youtube.com/watch?v=oYjseP_Qhv4">Responsive Resume Cv Website Using HTML CSS And JavaScript | Light/Dark Theme & Export PDF</a></sub>
+1. **Интерактивная карта компетенций**
+   - Группировка технологий по категориям и уровням экспертизы
+   - Интерактивные элементы для демонстрации опыта в каждой технологии
+   - Визуализация связей между технологиями и проектами
 
-### Features
+2. **Динамическая визуализация опыта**
+   - Хронология карьерного пути с интерактивной навигацией
+   - Детальная информация о проектах с возможностью фильтрации
+   - Ключевые достижения с визуальным выделением
 
-This is the **first version** of the project (*v1.0*). To improve the project in a new version (*v2.0*), CV customization could be added: choice of a color palette other than white/black, addition of other less common sections. But also adding data in a `.js` file instead of touching the `index.html` file.
+3. **Инновационный пользовательский интерфейс**
+   - Современные анимации и переходы между разделами
+   - Адаптивный отзывчивый дизайн для всех устройств
+   - Нестандартные интерактивные элементы управления
 
-- [x] Light/dark mode toggle
-- [x] Download to PDF
-- [x] Responsive
-- [x] Mobile screen mode
-- [ ] Customization
+4. **Многоязычность и доступность**
+   - Поддержка русского и английского языков
+   - Полная доступность для пользователей с ограниченными возможностями
+   - Оптимизация для разных устройств и сценариев использования
 
-## Demo
+5. **Технологическая витрина**
+   - Демонстрация передовых веб-технологий в работе
+   - Интеграция с внешними API (GitHub, LinkedIn) для актуальности данных
+   - Высокая производительность и оптимизация
 
-Live demo here: [live demo](https://leag76.github.io/cv-generator/ "Go to the live demo")
+## Разработка (Workflow)
 
-## Get started
+### История разработки
 
-### Prerequisites
-The only thing you need is a text editor or an IDE that allows connection to a local server (I recommend Visual Studio Code with its Live Server extension)
+- 25.04.2025 (начало): Создание сайта персонального профессионального резюме с помощью LLM в Cursor.
 
-### Installation
+### Список задач на разработку
 
-To start, let's go clone the project:
+#### Базовая функциональность
+- [x] Базовая структура резюме (HTML + Tailwind CSS)
+- [x] Разделы: Главная, Обо мне, Опыт работы, R&D & Learning Lab, Навыки, Интересы, Контакты
+- [x] Навигация с боковыми точками и видимыми подписями
+- [x] Переключение темной/светлой темы
+- [x] Мультиязычность (русский/английский)
+- [x] Анимированные переходы между разделами
+- [x] Слайдер опыта работы с анимацией
+- [x] Доступность для экранных читалок (ARIA-атрибуты)
 
-```
-git clone https://github.com/LeaG76/cv-generator.git
-```
+#### Необходимо реализовать (приоритет)
+- [ ] Интерактивная карта технологических компетенций с разными уровнями экспертизы
+- [ ] Визуализация карьерного роста и развития навыков
+- [ ] Улучшенные анимации и интерактивные элементы для "вау-эффекта"
+- [ ] Интеграция с API GitHub для отображения актуальных проектов
+- [ ] Оптимизация для мобильных устройств
+- [ ] Генерация PDF-версии резюме
+- [ ] Расширенные метрики и визуализация профессионального опыта
 
-Then, open it from your favorite text editor or IDE, normally you should have this project structure:
+#### Техническое развитие
+- [ ] Миграция на SPA-фреймворк (Vue.js, React или другой подходящий)
+- [ ] Добавление возможности настройки содержимого через конфигурационный файл
+- [ ] Интеграция с системами аналитики для отслеживания посещений
+- [ ] Улучшение производительности и оптимизация загрузки
 
-```bash
-├── assets/
-│   ├── javascripts/
-│   │   ├── main.js
-│   │   ├── html2pdf.v0.8.0.bundle.min.js
-│   │   └── html2pdf.v0.9.3.bundle.min.js
-│   ├── pdf/
-│   │   ├── myResumeCV-dark.pdf
-│   │   └── myResumeCV-light.pdf
-│   ├── pictures/
-│   │   ├── favicon/
-│   │   │   └── ...
-│   │   ├── results/
-│   │   │   └── myResumeCV-light.png
-│   │   ├── profile.png
-│   │   └── profile.txt
-│   └── stylesheets/
-│       ├── layout.css
-│       └── style.css
-├── index.html
-└── README.md
-```
+### История работы агента (agent-workflow-history)
 
-> <sub>**Warning**: To carry out this project, you must be connected to a *local server*, more particularly for the generation in **PDF** and for the display of the image from the txt file. More details [below](#configuration "Go to configuration")</sub>
->> <sub>If you can't connect to a local server, no problem, don't worry! You can simply upgrade to an older version of **html2pdf.js**. Version *0.8.0* can save a pdf by just launching the `.html` file on a browser without going through a local server</sub>
+### 25-26.04.2025: Начальная разработка
 
-### Configuration
+1. **Создание базовой структуры**:
+   - Создание HTML-структуры с использованием Tailwind CSS
+   - Реализация разделов резюме: Главная, Обо мне, Опыт работы и т.д.
+   - Настройка цветовой схемы и типографики
 
-<details open>
-  <summary><b>Local server</b></summary>
-  <br>
-  As said before, to be able to use this project, you will have to be connected to a local server
-  
-  Plusieurs éditeurs de textes ont la fonctionnalité de local server (like VSCode, SublimeText, Atom, ...)
+2. **Улучшение навигации**:
+   - Добавление боковой точечной навигации
+   - Модификация CSS для отображения подписей навигационных точек
+   - Обеспечение постоянной видимости подписей (без необходимости наведения)
+   - Стилизация активного состояния навигационных точек
 
-  <p align="center">
-    <img alt="Live Server" src="previews/live-server.png" /></br>
-    <img alt="Go Live" src="previews/go-live.png" />
-    <img alt="Port 5500" src="previews/port-5500.png" />
-  </p>
-</details>
+3. **Анимированные переходы**:
+   - Добавление плавных переходов между секциями
+   - Настройка CSS-анимаций для элементов при прокрутке
+   - Оптимизация анимаций для производительности
 
-<details close>
-  <summary><b>Convert your profile picture into an url in Base64</b></summary>
-  <br>
+4. **Слайдер опыта работы**:
+   - Создание интерактивного слайдера для опыта работы
+   - Добавление стрелок навигации и плавных переходов
+   - Оптимизация для клавиатурной навигации
 
-  To convert your image to a Base64 url, you can go to websites allowing this action to be carried out such as: [Base64 Image](https://www.base64-image.de/ "Go to Base64 Image") or [elmah.io](https://elmah.io/tools/base64-image-encoder "Go to elmah.io")
+5. **Темная/светлая тема**:
+   - Реализация переключателя темы
+   - Настройка стилей для каждой темы
+   - Сохранение предпочтения пользователя в localStorage
 
-  Plusieurs façons :
+6. **Мультиязычность**:
+   - Добавление системы переводов для русского и английского языков
+   - Создание объекта translations с ключами для всех текстовых элементов
+   - Реализация переключателя языка с сохранением выбора в localStorage
+   - Добавление data-i18n атрибутов ко всем текстовым элементам
+   - Обработка динамически создаваемых элементов для перевода
+   - Доработка системы мультиязычности для корректной работы со всеми элементами
 
-  - Avec un serveur local (fichier main.js -> profile.txt)
-  - Sans serveur local (mettre url directement dans la src de l'image dans le fichier .html)
+7. **Доработка доступности**:
+   - Добавление ARIA-атрибутов для всех интерактивных элементов
+   - Улучшение навигации с клавиатуры
+   - Адаптация для экранных читалок
+   - Добавление описаний и меток для повышения доступности
 
-  Convert your logo image to Base64 and replace this :
+### 26-27.04.2025: Улучшение на основе бизнес-целей
 
-```html
-<img src="assets/pictures/profile.png" alt="Icon picture" class="home_img">
-```
+1. **Создание карты технологических компетенций**:
+   - Разработка визуального представления навыков с цветовой кодировкой по уровням
+   - Группировка по категориям: Языки, Фреймворки, AI & Исследования
+   - Добавление интерактивных элементов с указанием опыта и процентом владения
 
-by this :
+2. **Улучшение главной секции**:
+   - Добавление фоновых декоративных элементов
+   - Внедрение градиентного текста с анимацией
+   - Создание интерактивных бейджей с ключевыми характеристиками
+   - Добавление плавающей анимации для визуального "вау-эффекта"
 
-```html
-<img src="your_base64_url" alt="Icon picture" class="home_img">
-```
-</details>
+3. **Расширение мультиязычности**:
+   - Добавление переводов для новых элементов интерфейса
+   - Улучшение переключения между языками
 
-<details close>
-  <summary><b>Create multiples size Favicons</b></summary>
-  <br>
-</details>
+4. **Улучшение визуальных эффектов**:
+   - Анимации при наведении для элементов навыков
+   - Эффекты тени и трансформации для интерактивных элементов
+   - Улучшенная цветовая схема для лучшего визуального восприятия
 
-## Usage
+5. **Структурирование документации**:
+   - Переименование файла workflow.md в README.md
+   - Реструктуризация пожеланий в четкие бизнес-цели и требования
+   - Организация списка задач в логические группы
 
-### Put your informations
+### Следующие шаги
 
-You can therefore modify the index.html file to put your information. If you want different icons, you can go to [Font Awesome](https://fontawesome.com/search?m=free&o=r "Go to Font Awesome") and select icons from a large selection of free and open-source icons
+1. **Миграция на SPA-фреймворк**:
+   - Изучение Vue.js как оптимального решения для данного проекта
+   - Разбиение существующего кода на компоненты
+   - Настройка маршрутизации и состояния приложения
 
-### Customize your resume CV
+2. **Динамическая визуализация опыта**:
+   - Создание интерактивной хронологии карьерного пути
+   - Добавление фильтров для отображения проектов 
+   - Визуализация связей между проектами и технологиями
 
-- changer palette couleur
-- changer police
-- changer icons Font Awesome
+3. **Интеграция с внешними API**:
+   - Подключение GitHub API для отображения актуальных проектов
+   - Возможная интеграция с LinkedIn для синхронизации опыта
+   - Добавление аналитики посещений
 
-## Examples
-
-## TodoList
-
-- Change html2pdf Version 0.8.0 -> 0.9.3
-- Création d'un fichier js dans lequel on met le contenu du CV
+4. **Оптимизация для мобильных устройств**:
+   - Полная адаптация под различные размеры экранов
+   - Улучшение навигации для сенсорных устройств
+   - Оптимизация производительности на мобильных устройствах
+    

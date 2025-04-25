@@ -159,6 +159,61 @@
        }
     }
 
+    /* Skill items hover effect */
+    .skill-item {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .skill-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.25);
+    }
+
+    /* Tech grid animations */
+    .tech-grid {
+      animation: fadeInGrid 2s ease-in-out forwards;
+    }
+    .tech-icon {
+      display: inline-block;
+      font-size: 2rem;
+      opacity: 0;
+      animation: floatIcon 3s ease-in-out infinite;
+      animation-delay: calc(var(--animation-order, 0) * 0.2s);
+    }
+    @keyframes fadeInGrid {
+      from { opacity: 0; }
+      to { opacity: 0.1; }
+    }
+    @keyframes floatIcon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    /* Floating animation for trait badges */
+    .trait-badge {
+      transition: all 0.3s ease;
+      animation: float 6s ease-in-out infinite;
+      animation-delay: calc(var(--animation-order, 0) * 1s);
+    }
+    .trait-badge:hover {
+      transform: translateY(-5px) scale(1.05);
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Hero section animations */
+    #hero h1 {
+      animation: gradientText 8s ease infinite;
+      background-size: 200% 200%;
+    }
+    @keyframes gradientText {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     /* Responsive navigation */
     @media (max-width: 768px) {
       #nav-dots {
@@ -196,11 +251,77 @@
 
   <!-- Hero Section -->
   <section id="hero" class="section visible text-center px-4 bg-gray-50 dark:bg-gray-800">
-    <h1 class="text-5xl md:text-7xl font-bold mb-4" data-i18n="hero-title">Developer-Researcher</h1>
-    <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-6" data-i18n="hero-description">Building systems from scratch, diving into domains, and exploring cutting-edge tech</p>
-    <div class="space-x-4">
-      <a href="#" aria-label="Download Resume PDF" data-i18n-aria-label="hero-download-aria" class="button-like px-6 py-3 bg-blue-600 text-white rounded inline-block" data-i18n="hero-download">Download PDF</a>
-      <a href="mailto:your.email@example.com" aria-label="Contact me via email" data-i18n-aria-label="hero-contact-aria" class="button-like px-6 py-3 border border-blue-600 text-blue-600 rounded hover:bg-blue-50 dark:hover:bg-gray-700 inline-block" data-i18n="hero-contact">Contact me</a>
+    <div class="container mx-auto flex flex-col items-center relative">
+      <!-- Фоновые декоративные элементы -->
+      <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-10 -right-10 w-64 h-64 bg-blue-500/10 dark:bg-blue-400/10 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-indigo-500/10 dark:bg-indigo-400/10 rounded-full blur-3xl"></div>
+        <!-- Анимированная сетка технологий (только декоративная) -->
+        <div class="tech-grid grid grid-cols-6 gap-8 absolute inset-0 opacity-10">
+          <span class="tech-icon">⚙️</span>
+          <span class="tech-icon">🤖</span>
+          <span class="tech-icon">🔥</span>
+          <span class="tech-icon">🚀</span>
+          <span class="tech-icon">🎮</span>
+          <span class="tech-icon">🌐</span>
+          <span class="tech-icon">📊</span>
+          <span class="tech-icon">📡</span>
+          <span class="tech-icon">🛰️</span>
+          <span class="tech-icon">✈️</span>
+          <span class="tech-icon">🔍</span>
+          <span class="tech-icon">🧠</span>
+        </div>
+      </div>
+      
+      <!-- Основной контент -->
+      <div class="relative z-10">
+        <div class="role-badge inline-block px-4 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full mb-4 transform hover:scale-105 transition-transform" data-i18n="hero-badge">Developer-Researcher</div>
+        
+        <h1 class="text-5xl md:text-7xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-500 dark:from-blue-400 dark:to-indigo-300" data-i18n="hero-title">Developer-Researcher</h1>
+        
+        <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-6 max-w-3xl" data-i18n="hero-description">Building systems from scratch, diving into domains, and exploring cutting-edge tech</p>
+        
+        <!-- Ключевые характеристики -->
+        <div class="key-traits flex flex-wrap justify-center gap-4 mb-8">
+          <div class="trait-badge px-3 py-2 bg-blue-50 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 rounded-lg flex items-center shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span data-i18n="hero-trait-1">Full-Stack</span>
+          </div>
+          <div class="trait-badge px-3 py-2 bg-indigo-50 dark:bg-indigo-900/50 text-indigo-800 dark:text-indigo-200 rounded-lg flex items-center shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+              <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+            </svg>
+            <span data-i18n="hero-trait-2">Research Minded</span>
+          </div>
+          <div class="trait-badge px-3 py-2 bg-purple-50 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 rounded-lg flex items-center shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+            <span data-i18n="hero-trait-3">Builder</span>
+          </div>
+          <div class="trait-badge px-3 py-2 bg-green-50 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-lg flex items-center shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+            </svg>
+            <span data-i18n="hero-trait-4">Fast Learner</span>
+          </div>
+        </div>
+        
+        <div class="space-x-4">
+          <a href="#" aria-label="Download Resume PDF" data-i18n-aria-label="hero-download-aria" class="button-like px-6 py-3 bg-blue-600 text-white rounded inline-block shadow-lg hover:shadow-blue-500/30 dark:hover:shadow-blue-400/20" data-i18n="hero-download">Download PDF</a>
+          <a href="mailto:your.email@example.com" aria-label="Contact me via email" data-i18n-aria-label="hero-contact-aria" class="button-like px-6 py-3 border border-blue-600 text-blue-600 dark:text-blue-400 rounded hover:bg-blue-50 dark:hover:bg-gray-700 inline-block" data-i18n="hero-contact">Contact me</a>
+        </div>
+      </div>
+      
+      <!-- Индикатор прокрутки вниз -->
+      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </div>
     </div>
   </section>
 
@@ -262,7 +383,216 @@
   <section id="skills" class="section w-full bg-gray-50 dark:bg-gray-800 px-4">
     <div class="container mx-auto flex flex-col items-center">
       <h2 class="text-3xl font-bold mb-8" data-i18n="skills-title">Skills & Tech Stack</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-gray-700 dark:text-gray-300 w-full max-w-4xl">
+      
+      <!-- Skills visualization - компетенции с визуализацией уровней -->
+      <div class="skill-map w-full max-w-4xl mb-10">
+        <div class="skill-level-legend flex justify-between items-center mb-4 text-sm text-gray-600 dark:text-gray-300">
+          <div class="flex items-center">
+            <span class="w-3 h-3 inline-block bg-green-500 rounded-full mr-1"></span>
+            <span data-i18n="skills-level-expert">Expert</span>
+          </div>
+          <div class="flex items-center">
+            <span class="w-3 h-3 inline-block bg-blue-500 rounded-full mr-1"></span>
+            <span data-i18n="skills-level-proficient">Proficient</span>
+          </div>
+          <div class="flex items-center">
+            <span class="w-3 h-3 inline-block bg-yellow-500 rounded-full mr-1"></span>
+            <span data-i18n="skills-level-intermediate">Intermediate</span>
+          </div>
+          <div class="flex items-center">
+            <span class="w-3 h-3 inline-block bg-pink-400 rounded-full mr-1"></span>
+            <span data-i18n="skills-level-learning">Learning</span>
+          </div>
+        </div>
+        
+        <div class="skill-categories mb-6">
+          <!-- Languages -->
+          <div class="skill-category mb-8">
+            <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200" data-i18n="skills-languages-title">Languages</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              <div class="skill-item border border-green-500 bg-green-50 dark:bg-green-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">C#</span>
+                  <span class="text-green-600 dark:text-green-400 text-sm">90%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-green-500 h-2 rounded-full" style="width: 90%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">8+ years</p>
+              </div>
+              
+              <div class="skill-item border border-blue-500 bg-blue-50 dark:bg-blue-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">Python</span>
+                  <span class="text-blue-600 dark:text-blue-400 text-sm">75%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">4+ years</p>
+              </div>
+              
+              <div class="skill-item border border-blue-500 bg-blue-50 dark:bg-blue-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">JavaScript</span>
+                  <span class="text-blue-600 dark:text-blue-400 text-sm">80%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-blue-500 h-2 rounded-full" style="width: 80%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">5+ years</p>
+              </div>
+              
+              <div class="skill-item border border-yellow-500 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">TypeScript</span>
+                  <span class="text-yellow-600 dark:text-yellow-300 text-sm">65%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-yellow-500 h-2 rounded-full" style="width: 65%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">2+ years</p>
+              </div>
+              
+              <div class="skill-item border border-pink-400 bg-pink-50 dark:bg-pink-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">Go</span>
+                  <span class="text-pink-500 dark:text-pink-300 text-sm">40%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-pink-400 h-2 rounded-full" style="width: 40%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">Learning</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Frameworks -->
+          <div class="skill-category mb-8">
+            <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200" data-i18n="skills-frameworks-title">Frameworks</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              <div class="skill-item border border-green-500 bg-green-50 dark:bg-green-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">ASP.NET</span>
+                  <span class="text-green-600 dark:text-green-400 text-sm">85%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">7+ years</p>
+              </div>
+              
+              <div class="skill-item border border-blue-500 bg-blue-50 dark:bg-blue-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">Vue.js</span>
+                  <span class="text-blue-600 dark:text-blue-400 text-sm">70%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-blue-500 h-2 rounded-full" style="width: 70%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">3+ years</p>
+              </div>
+              
+              <div class="skill-item border border-yellow-500 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">Angular</span>
+                  <span class="text-yellow-600 dark:text-yellow-300 text-sm">60%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-yellow-500 h-2 rounded-full" style="width: 60%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">2+ years</p>
+              </div>
+              
+              <div class="skill-item border border-yellow-500 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">ROS2</span>
+                  <span class="text-yellow-600 dark:text-yellow-300 text-sm">55%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-yellow-500 h-2 rounded-full" style="width: 55%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">1+ years</p>
+              </div>
+              
+              <div class="skill-item border border-pink-400 bg-pink-50 dark:bg-pink-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">React</span>
+                  <span class="text-pink-500 dark:text-pink-300 text-sm">45%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-pink-400 h-2 rounded-full" style="width: 45%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">Learning</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- AI & Research -->
+          <div class="skill-category mb-8">
+            <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200" data-i18n="skills-ai-title">AI & Research</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              <div class="skill-item border border-blue-500 bg-blue-50 dark:bg-blue-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">LLM Pipelines</span>
+                  <span class="text-blue-600 dark:text-blue-400 text-sm">75%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">2+ years</p>
+              </div>
+              
+              <div class="skill-item border border-blue-500 bg-blue-50 dark:bg-blue-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">Prompt Engineering</span>
+                  <span class="text-blue-600 dark:text-blue-400 text-sm">80%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-blue-500 h-2 rounded-full" style="width: 80%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">1.5+ years</p>
+              </div>
+              
+              <div class="skill-item border border-yellow-500 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">LangChain</span>
+                  <span class="text-yellow-600 dark:text-yellow-300 text-sm">65%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-yellow-500 h-2 rounded-full" style="width: 65%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">1+ years</p>
+              </div>
+              
+              <div class="skill-item border border-pink-400 bg-pink-50 dark:bg-pink-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">Knowledge Graphs</span>
+                  <span class="text-pink-500 dark:text-pink-300 text-sm">50%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-pink-400 h-2 rounded-full" style="width: 50%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">Learning</p>
+              </div>
+              
+              <div class="skill-item border border-pink-400 bg-pink-50 dark:bg-pink-900/30 rounded-lg p-3 transform transition-transform hover:scale-105 hover:shadow-md">
+                <div class="flex justify-between">
+                  <span class="font-medium">Embeddings</span>
+                  <span class="text-pink-500 dark:text-pink-300 text-sm">55%</span>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                  <div class="bg-pink-400 h-2 rounded-full" style="width: 55%"></div>
+                </div>
+                <p class="text-xs mt-2 text-gray-600 dark:text-gray-300">Learning</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Простая сгруппированная сетка списка навыков (резервный дизайн) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-gray-700 dark:text-gray-300 w-full max-w-4xl hidden">
         <div> <h4 class="font-semibold mb-2" data-i18n="skills-languages-title">Languages</h4> <p data-i18n="skills-languages-list">C#, Python, JS/TS</p> </div>
         <div> <h4 class="font-semibold mb-2" data-i18n="skills-frameworks-title">Frameworks</h4> <p data-i18n="skills-frameworks-list">ASP.NET, EF, Vue, Angular, MQTT, ROS2</p> </div>
         <div> <h4 class="font-semibold mb-2" data-i18n="skills-databases-title">Databases</h4> <p data-i18n="skills-databases-list">PostgreSQL, MSSQL, MongoDB</p> </div>
@@ -313,7 +643,12 @@
         'theme-toggle-label': 'Переключить темную тему',
         'language-toggle-label': 'Переключить язык',
         'hero-title': 'Developer-Researcher',
+        'hero-badge': 'Разработчик-Исследователь',
         'hero-description': 'Создаю системы с нуля, погружаюсь в предметные области и исследую передовые технологии',
+        'hero-trait-1': 'Full-Stack',
+        'hero-trait-2': 'Исследователь',
+        'hero-trait-3': 'Строитель',
+        'hero-trait-4': 'Быстро обучаюсь',
         'hero-download': 'Скачать PDF',
         'hero-download-aria': 'Скачать резюме в PDF',
         'hero-contact': 'Связаться',
@@ -340,6 +675,10 @@
         'lab-item-4': 'LangChain и оркестрация',
         'lab-item-5': 'Kubernetes (изучаю)',
         'skills-title': 'Навыки и Технологии',
+        'skills-level-expert': 'Эксперт',
+        'skills-level-proficient': 'Опытный',
+        'skills-level-intermediate': 'Средний',
+        'skills-level-learning': 'Изучаю',
         'skills-languages-title': 'Языки',
         'skills-languages-list': 'C#, Python, JS/TS',
         'skills-frameworks-title': 'Фреймворки',
@@ -348,7 +687,7 @@
         'skills-databases-list': 'PostgreSQL, MSSQL, MongoDB',
         'skills-infra-title': 'Инфраструктура',
         'skills-infra-list': 'Docker, Git, CI/CD, Linux',
-        'skills-ai-title': 'ИИ',
+        'skills-ai-title': 'ИИ и Исследования',
         'skills-ai-list': 'LLM пайплайны, дизайн промптов',
         'skills-learning-title': 'Сейчас изучаю',
         'skills-learning-list': 'Kubernetes, LangChain, Событийно-ориентированная арх.',
@@ -380,7 +719,12 @@
         'theme-toggle-label': 'Toggle dark mode',
         'language-toggle-label': 'Toggle language',
         'hero-title': 'Developer-Researcher',
+        'hero-badge': 'Developer-Researcher',
         'hero-description': 'Building systems from scratch, diving into domains, and exploring cutting-edge tech',
+        'hero-trait-1': 'Full-Stack',
+        'hero-trait-2': 'Research Minded',
+        'hero-trait-3': 'Builder',
+        'hero-trait-4': 'Fast Learner',
         'hero-download': 'Download PDF',
         'hero-download-aria': 'Download Resume PDF',
         'hero-contact': 'Contact me',
@@ -407,6 +751,10 @@
         'lab-item-4': 'LangChain and orchestration',
         'lab-item-5': 'Kubernetes (learning)',
         'skills-title': 'Skills & Tech Stack',
+        'skills-level-expert': 'Expert',
+        'skills-level-proficient': 'Proficient',
+        'skills-level-intermediate': 'Intermediate',
+        'skills-level-learning': 'Learning',
         'skills-languages-title': 'Languages',
         'skills-languages-list': 'C#, Python, JS/TS',
         'skills-frameworks-title': 'Frameworks',
@@ -415,7 +763,7 @@
         'skills-databases-list': 'PostgreSQL, MSSQL, MongoDB',
         'skills-infra-title': 'Infra',
         'skills-infra-list': 'Docker, Git, CI/CD, Linux',
-        'skills-ai-title': 'AI',
+        'skills-ai-title': 'AI & Research',
         'skills-ai-list': 'LLM pipelines, prompt design',
         'skills-learning-title': 'Currently Learning',
         'skills-learning-list': 'Kubernetes, LangChain, Event-driven arch.',
